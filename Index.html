@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Telcoin Profit Tracker</title>
+  <style>
+    body {
+      background-color: #121212;
+      color: #ffffff;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 30px;
+    }
+    .container {
+      max-width: 400px;
+      margin: auto;
+      border: 1px solid #333;
+      border-radius: 8px;
+      padding: 20px;
+      background-color: #1e1e1e;
+    }
+    h1 {
+      color: #00ffae;
+    }
+    .data {
+      font-size: 1.2em;
+      margin-top: 15px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Telcoin Tracker</h1>
+    <div class="data" id="price">Loading...</div>
+    <div class="data" id="profit"></div>
+  </div>
+
+  <script>
+    const telAmount = 1200000;
+    const buyPrice = 0.005528;
+
+    async function fetchPrice() {
+      try {
+        const res = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=telcoin&vs_currencies=usd');
+        const data = await res.json();
+        const price = data.telcoin.usd;
+        const profit = (price - buyPrice) * telAmount;
+
+        document.getElementById('price').textContent = `Current Price: $${price.toFixed(6)}`;
+        document.getElementById('profit').textContent = `Profit/Loss: $${profit.toFixed(2)}`;
+      } catch (err) {
+        document.getElementById('price').textContent = 'Error fetching price';
+      }
+    }
+
+    fetchPrice();
+    setInterval(fetchPrice, 60000); // Refresh every 60 seconds
+  </script>
+</body>
+</html>
