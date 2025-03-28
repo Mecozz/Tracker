@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Telcoin Profit Tracker</title>
   <style>
     body {
@@ -34,11 +34,14 @@
     <h1>Telcoin Tracker</h1>
     <div class="data" id="price">Loading...</div>
     <div class="data" id="profit"></div>
+    <div class="data" id="countdown">Refreshing in: 5s</div>
+    <div class="data" id="last-updated"></div>
   </div>
 
   <script>
     const telAmount = 1200000;
     const buyPrice = 0.005528;
+    const refreshInterval = 5; // seconds
 
     async function fetchPrice() {
       try {
@@ -46,16 +49,28 @@
         const data = await res.json();
         const price = data.telcoin.usd;
         const profit = (price - buyPrice) * telAmount;
+        const now = new Date().toLocaleTimeString();
 
         document.getElementById('price').textContent = `Current Price: $${price.toFixed(6)}`;
         document.getElementById('profit').textContent = `Profit/Loss: $${profit.toFixed(2)}`;
+        document.getElementById('last-updated').textContent = `Last updated: ${now}`;
       } catch (err) {
         document.getElementById('price').textContent = 'Error fetching price';
       }
     }
 
+    let countdown = refreshInterval;
+    function updateTimer() {
+      document.getElementById('countdown').textContent = `Refreshing in: ${countdown}s`;
+      countdown--;
+      if (countdown < 0) {
+        fetchPrice();
+        countdown = refreshInterval;
+      }
+    }
+
     fetchPrice();
-    setInterval(fetchPrice, 5000); // Refresh every 60 seconds
+    setInterval(updateTimer, 1000); // Updates countdown every second
   </script>
 </body>
 </html>
