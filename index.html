@@ -45,6 +45,7 @@
 
     .gain { color: #00ffae; }
     .loss { color: #ff5252; }
+    .neutral { color: #fff; }
 
     .total {
       font-size: 1.2em;
@@ -85,8 +86,8 @@
 
   <script>
     const coins = [
-      { id: 'ripple', name: 'XRP', amount: 3224.68, buyIn: 2.40 },
-      { id: 'telcoin', name: 'TEL', amount: 1246782, buyIn: 0.005528 }
+      { id: 'ripple', name: 'XRP', amount: 3224.68, buyIn: 2.40, prevPrice: 0 },
+      { id: 'telcoin', name: 'TEL', amount: 1246782, buyIn: 0.005528, prevPrice: 0 }
     ];
 
     const originalState = JSON.parse(JSON.stringify(coins));
@@ -114,11 +115,19 @@
         const percent = (profit / cost) * 100;
         total += value;
 
+        // Determine price color
+        let priceColor = 'neutral';
+        if (coin.prevPrice !== 0) {
+          if (price > coin.prevPrice) priceColor = 'gain';
+          else if (price < coin.prevPrice) priceColor = 'loss';
+        }
+        coin.prevPrice = price; // Update previous price for next comparison
+
         const card = document.createElement('div');
         card.className = 'coin-card';
         card.innerHTML = `
           <strong>${coin.name}</strong><br>
-          <label>Current Price: $${price.toFixed(6)}</label>
+          <label class="${priceColor}">Current Price: $${price.toFixed(6)}</label>
           <label>Amount:
             <input type="number" value="${amount}" onchange="updateAmount(${i}, this.value)">
           </label>
