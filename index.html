@@ -43,9 +43,9 @@
       margin-top: 2px;
     }
 
-    .gain { color: #00ffae; }
-    .loss { color: #ff5252; }
-    .neutral { color: #fff; }
+    .gain { color: #00ffae; transition: color 0.5s ease; }
+    .loss { color: #ff5252; transition: color 0.5s ease; }
+    .neutral { color: #fff; transition: color 0.5s ease; }
 
     .total {
       font-size: 1.2em;
@@ -121,7 +121,7 @@
           if (price > coin.prevPrice) priceColor = 'gain';
           else if (price < coin.prevPrice) priceColor = 'loss';
         }
-        coin.prevPrice = price; // Update previous price for next comparison
+        coin.prevPrice = price;
 
         const card = document.createElement('div');
         card.className = 'coin-card';
