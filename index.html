@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Crypto Tracker</title>
+  <title>Telcoin Tracker</title>
   <style>
     body {
       background-color: #121212;
@@ -71,20 +71,11 @@
     button:hover {
       background-color: #666;
     }
-
-    @media(min-width: 768px) {
-      .coin-card {
-        display: inline-block;
-        vertical-align: top;
-        width: 45%;
-        margin: 10px;
-      }
-    }
   </style>
 </head>
 <body>
 
-  <h1>Crypto Portfolio Tracker</h1>
+  <h1>Telcoin Tracker</h1>
   <div id="cards"></div>
 
   <div class="total" id="totalValue">Total Portfolio Value: $0.00</div>
@@ -96,8 +87,7 @@
     let countdown = updateInterval;
 
     const coins = [
-      { id: 'ripple', name: 'XRP', amount: 3224.68, buyIn: 2.40, prevPrice: 0 },
-      { id: 'telcoin', name: 'TEL', amount: 1246782, buyIn: 0.005528, prevPrice: 0 }
+      { id: 'telcoin', name: 'TEL', amount: 2537.545, buyIn: 0.005528, prevPrice: 0 }
     ];
 
     const originalState = JSON.parse(JSON.stringify(coins));
@@ -120,7 +110,7 @@
       container.innerHTML = '';
       let total = 0;
 
-      coins.forEach((coin, i) => {
+      coins.forEach((coin) => {
         const price = prices[coin.id]?.usd || 0;
         const amount = parseFloat(coin.amount);
         const buyIn = parseFloat(coin.buyIn);
@@ -143,10 +133,10 @@
           <strong>${coin.name}</strong><br>
           <label class="${priceColor}">Current Price: $${price.toFixed(6)}</label>
           <label>Amount:
-            <input type="number" value="${amount}" onchange="updateAmount(${i}, this.value)">
+            <input type="number" value="${amount}" onchange="updateAmount(0, this.value)">
           </label>
           <label>Buy-In Price:
-            <input type="number" value="${buyIn}" step="0.000001" onchange="updateBuyIn(${i}, this.value)">
+            <input type="number" value="${buyIn}" step="0.000001" onchange="updateBuyIn(0, this.value)">
           </label>
           <label class="${profit >= 0 ? 'gain' : 'loss'}">Profit/Loss: $${profit.toFixed(2)}</label>
           <label class="${profit >= 0 ? 'gain' : 'loss'}">% Gain/Loss: ${percent.toFixed(2)}%</label>
@@ -181,15 +171,13 @@
     }
 
     function resetValues() {
-      for (let i = 0; i < coins.length; i++) {
-        coins[i].amount = originalState[i].amount;
-        coins[i].buyIn = originalState[i].buyIn;
-      }
+      coins[0].amount = originalState[0].amount;
+      coins[0].buyIn = originalState[0].buyIn;
       fetchPrices();
     }
 
     fetchPrices();
-    setInterval(updateCountdown, 1000); // Update countdown every second
+    setInterval(updateCountdown, 1000);
   </script>
 
 </body>
