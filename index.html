@@ -52,6 +52,12 @@
       margin-top: 25px;
     }
 
+    .countdown {
+      margin-top: 10px;
+      font-size: 1em;
+      color: #aaa;
+    }
+
     button {
       margin-top: 20px;
       padding: 10px 20px;
@@ -82,9 +88,13 @@
   <div id="cards"></div>
 
   <div class="total" id="totalValue">Total Portfolio Value: $0.00</div>
+  <div class="countdown" id="countdown">Next update in: 10 seconds</div>
   <button onclick="resetValues()">Reset All</button>
 
   <script>
+    const updateInterval = 10; // Update every 10 seconds
+    let countdown = updateInterval;
+
     const coins = [
       { id: 'ripple', name: 'XRP', amount: 3224.68, buyIn: 2.40, prevPrice: 0 },
       { id: 'telcoin', name: 'TEL', amount: 1246782, buyIn: 0.005528, prevPrice: 0 }
@@ -95,9 +105,14 @@
     async function fetchPrices() {
       const ids = coins.map(c => c.id).join(',');
       const url = `https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=usd`;
-      const res = await fetch(url);
-      const data = await res.json();
-      updateCards(data);
+      try {
+        const res = await fetch(url);
+        const data = await res.json();
+        updateCards(data);
+        resetCountdown();
+      } catch (err) {
+        console.error("Error fetching prices:", err);
+      }
     }
 
     function updateCards(prices) {
@@ -115,7 +130,6 @@
         const percent = (profit / cost) * 100;
         total += value;
 
-        // Determine price color
         let priceColor = 'neutral';
         if (coin.prevPrice !== 0) {
           if (price > coin.prevPrice) priceColor = 'gain';
@@ -143,6 +157,19 @@
       document.getElementById('totalValue').textContent = `Total Portfolio Value: $${total.toFixed(2)}`;
     }
 
+    function updateCountdown() {
+      countdown--;
+      if (countdown <= 0) {
+        fetchPrices();
+        countdown = updateInterval;
+      }
+      document.getElementById('countdown').textContent = `Next update in: ${countdown} seconds`;
+    }
+
+    function resetCountdown() {
+      countdown = updateInterval;
+    }
+
     function updateAmount(index, value) {
       coins[index].amount = parseFloat(value);
       fetchPrices();
@@ -162,7 +189,7 @@
     }
 
     fetchPrices();
-    setInterval(fetchPrices, 10000);
+    setInterval(updateCountdown, 1000); // Update countdown every second
   </script>
 
 </body>
